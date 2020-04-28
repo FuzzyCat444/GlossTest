@@ -5,7 +5,7 @@ import Graphics.Gloss
 import Render
 
 window :: Display
-window = InWindow "Nice Window" (800, 600) (100, 100)
+window = InWindow "Cube Test" (800, 600) (100, 100)
 
 background :: Color
 background = black

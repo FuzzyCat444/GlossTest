@@ -44,7 +44,7 @@ renderCube mat or = Pictures [topPicture, leftPicture, rightPicture]
     where topPicture = (translate 0 (b/2) 
                       . scale 1 sinPitch 
                       . rotate (-yaw)) 
-                        top 
+                        actualTop
           leftPicture = (translate (l/2 - r/2) (b/2 - t/2) 
                        . shear ShearY (-tu) l 
                        . scale sinYaw cosPitch 
@@ -63,15 +63,25 @@ renderCube mat or = Pictures [topPicture, leftPicture, rightPicture]
           l = size * sinYaw
           r = size * cosYaw
           
-          actualLeft | yaw < 90 = right
-                     | yaw < 180 = back
-                     | yaw < 270 = left
-                     | otherwise = front
+          
+          shading amt = color (withAlpha amt black) $ rectangleSolid size size
+          shadedTop = Pictures [top, shading 0.0]
+          shadedFront = Pictures [front, shading 0.2]
+          shadedLeft = Pictures [left, shading 0.4]
+          shadedBack = Pictures [back, shading 0.6]
+          shadedRight = Pictures [right, shading 0.4]
+          
+          actualTop = shadedTop
+          
+          actualLeft | yaw < 90 = shadedRight
+                     | yaw < 180 = shadedBack
+                     | yaw < 270 = shadedLeft
+                     | otherwise = shadedFront
                      
-          actualRight | yaw < 90 = front
-                      | yaw < 180 = right
-                      | yaw < 270 = back
-                      | otherwise = left
+          actualRight | yaw < 90 = shadedFront
+                      | yaw < 180 = shadedRight
+                      | yaw < 270 = shadedBack
+                      | otherwise = shadedLeft
           
           CubeMaterial size top front left back right = mat
           CubeOrientation yaw cosYaw sinYaw cosPitch sinPitch = or
